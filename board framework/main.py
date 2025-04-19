@@ -14,6 +14,7 @@ while running:
     for event in pg.event.get():
         if event.type == pg.QUIT:
             running = False
+        game.handle_event(event)
     screen.fill(Settings.BACKGROUND)
     game.draw(screen)
 
