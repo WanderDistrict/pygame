@@ -2,7 +2,7 @@ import pygame as pg
 
 
 class Settings:
-    SIZE = WIDTH, HEIGHT = (600, 400)
+    SIZE = WIDTH, HEIGHT = (620, 650)
     # Количество кадров в секунду
     FPS = 60
     # Цвет фона

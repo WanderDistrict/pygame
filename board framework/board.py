@@ -63,5 +63,7 @@ class Board:
             if coord:
                 self.on_click(*coord)
 
-    def get_cell(self, row: int, col: int) -> int:
+    def get_cell(self, row: int, col: int) -> int | None:
+        if row < 0 or row >= self._height or col < 0 or col >= self._width:
+            return None
         return self._board[row][col]

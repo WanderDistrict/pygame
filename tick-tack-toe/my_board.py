@@ -4,6 +4,7 @@ from typing import override
 import pygame as pg
 
 from board import Board
+from config import Settings
 
 
 class Cell(enum.Enum):
@@ -15,14 +16,18 @@ class Cell(enum.Enum):
 class TickTackToe(Board):
     COLOR_CROSS = '#FF0000'
     COLOR_CIRCLE = '#00FF00'
+    COLOR_TEXT = '#FFFFFF'
     FIGURE_WIDTH = 5
 
     def __init__(self, width: int, height: int):
         super().__init__(width, height, initial_value=Cell.EMPTY)
         self._current_user = Cell.CROSS
         self._is_finished = False
+        self._font = pg.font.SysFont('Comic Sans MS', 26)
 
     def next_player(self):
+        if self._is_finished:
+            return
         if self._current_user == Cell.CROSS:
             self._current_user = Cell.CIRCLE
         else:
@@ -39,8 +44,78 @@ class TickTackToe(Board):
         self.next_player()
 
     def check_win(self) -> None:
-        # TODO: Есть ли выигрыш
-        ...
+        #  Проверяем строки
+        for row in range(self._height):
+            n = 0
+            for col in range(self._width):
+                cell = self.get_cell(row, col)
+                if cell == Cell.EMPTY or cell is None:
+                    continue
+                if cell == self.get_cell(row, col - 1):
+                    n += 1
+                    if n == 5:
+                        self._is_finished = True
+                        return
+                else:
+                    n = 1
+        # Проверяем столбцы
+        for col in range(self._width):
+            n = 0
+            for row in range(self._height):
+                cell = self.get_cell(row, col)
+                if cell == Cell.EMPTY or cell is None:
+                    continue
+                if cell == self.get_cell(row - 1, col):
+                    n += 1
+                    if n == 5:
+                        self._is_finished = True
+                        return
+                else:
+                    n = 1
+        # Проверяем главные диагонали
+        for row in range(-self._height, self._height):
+            n = 0
+            for col in range(self._width):
+                cell = self.get_cell(row + col, col)
+                if cell == Cell.EMPTY or cell is None:
+                    continue
+                if cell == self.get_cell(row + col - 1, col - 1):
+                    n += 1
+                    if n == 5:
+                        self._is_finished = True
+                        return
+                else:
+                    n = 1
+        # Проверяем побочные диагонали
+        for row in range(-self._height, self._height):
+            n = 0
+            for col in range(self._width):
+                cell = self.get_cell(row + col, self._width - col - 1)
+                if cell == Cell.EMPTY or cell is None:
+                    continue
+                if cell == self.get_cell(row + col - 1, self._width - col):
+                    n += 1
+                    if n == 5:
+                        self._is_finished = True
+                        return
+                else:
+                    n = 1
+
+    @override
+    def draw(self, screen: pg.Surface) -> None:
+        super().draw(screen)
+        text = ''
+        if self._is_finished:
+            text += 'Выиграли: '
+        else:
+            text += 'Текущий ход: '
+        if self._current_user == Cell.CIRCLE:
+            text += 'НОЛИКИ'
+        else:
+            text += 'КРЕСТИКИ'
+        text_img = self._font.render(text, True, self.COLOR_TEXT)
+        screen.blit(text_img, ((Settings.WIDTH - text_img.get_width()) // 2, 0))
+
 
     @override
     def draw_cell(self, screen: pg.Surface, row: int, col: int, rect: pg.Rect) -> None:

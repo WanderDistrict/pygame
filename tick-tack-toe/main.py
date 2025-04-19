@@ -7,7 +7,8 @@ pg.init()
 screen = pg.display.set_mode(Settings.SIZE)
 pg.display.set_caption(Settings.TITLE)
 clock = pg.time.Clock()
-game = TickTackToe(5, 5)
+game = TickTackToe(15, 15)
+game.set_view(10, 40, 40)
 running = True
 while running:
     for event in pg.event.get():
