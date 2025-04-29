@@ -11,6 +11,7 @@ clock = pg.time.Clock()
 all_sprites = pg.sprite.Group()
 player = MySprite(all_sprites)
 player.rect.bottom = HEIGHT
+player.rect.centerx = WIDTH / 2
 
 
 running = True
