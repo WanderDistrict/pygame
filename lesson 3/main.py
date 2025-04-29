@@ -10,6 +10,7 @@ clock = pg.time.Clock()
 
 all_sprites = pg.sprite.Group()
 player = MySprite(all_sprites)
+player.rect.bottom = HEIGHT
 
 running = True
 while running:
