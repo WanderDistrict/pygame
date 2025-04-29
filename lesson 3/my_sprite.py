@@ -15,4 +15,4 @@ class MySprite(pg.sprite.Sprite):
         self.rect = self.IMG.get_rect()
 
     def update(self):
-        ...
+        pass
