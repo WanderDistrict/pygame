@@ -1,3 +1,7 @@
+"""
+Этот модуль содержит основную логику игры, включая инициализацию Pygame,
+создание окна, обработку событий и отрисовку игровых объектов.
+"""
 import pygame as pg
 
 pg.init()
@@ -11,6 +15,9 @@ BG_COLOR = pg.Color('black')
 
 
 def game():
+    """
+    Основная функция игры, которая инициализирует и запускает игровой цикл.
+    """
     all_sprites = pg.sprite.Group()
     platform_group = pg.sprite.Group()
     ladder_group = pg.sprite.Group()

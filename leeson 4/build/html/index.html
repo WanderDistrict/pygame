@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html lang="ru" data-content_root="./">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Ladder Platformer documentation &#8212; документация Ladder Platformer 1.0</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css?v=12dfc556" />
+    <script src="_static/documentation_options.js?v=9ca2116e"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/translations.js?v=9bfe3ffa"></script>
+    <link rel="index" title="Алфавитный указатель" href="genindex.html" />
+    <link rel="search" title="Поиск" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="ladder-platformer-documentation">
+<h1>Ladder Platformer documentation<a class="headerlink" href="#ladder-platformer-documentation" title="Ссылка на этот заголовок">¶</a></h1>
+<p>Add your content using <code class="docutils literal notranslate"><span class="pre">reStructuredText</span></code> syntax. See the
+<a class="reference external" href="https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html">reStructuredText</a>
+documentation for details.</p>
+<p id="module-main">Этот модуль содержит основную логику игры, включая инициализацию Pygame,
+создание окна, обработку событий и отрисовку игровых объектов.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="main.game">
+<span class="sig-prename descclassname"><span class="pre">main.</span></span><span class="sig-name descname"><span class="pre">game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/main.html#game"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#main.game" title="Link to this definition">¶</a></dt>
+<dd><p>Основная функция игры, которая инициализирует и запускает игровой цикл.</p>
+</dd></dl>
+
+<p id="module-utils">Этот модуль содержит вспомогательные функции, такие как загрузка изображений.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="utils.load_img">
+<span class="sig-prename descclassname"><span class="pre">utils.</span></span><span class="sig-name descname"><span class="pre">load_img</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">image_path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">colorkey</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Surface</span></span></span><a class="reference internal" href="_modules/utils.html#load_img"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#utils.load_img" title="Link to this definition">¶</a></dt>
+<dd><p>Загружает изображение из файла.</p>
+<dl>
+<dt>Аргументы:</dt><dd><p>image_path (str): Путь к файлу изображения относительно папки „data/img“.
+colorkey (optional): Цвет, который будет считаться прозрачным.  Если None, прозрачность не применяется.</p>
+<blockquote>
+<div><p>Если -1, цвет верхнего левого пикселя будет использован как colorkey.</p>
+</div></blockquote>
+</dd>
+<dt>Возвращает:</dt><dd><p>pg.Surface: Загруженное изображение в виде поверхности Pygame.</p>
+</dd>
+<dt>Вызывает:</dt><dd><p>SystemExit: Если файл изображения не найден.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<p id="module-my_sprite">Этот модуль содержит классы для создания спрайтов в Pygame,
+включая игрового персонажа (MySprite), платформы (Platform) и лестницы (Ladder).</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="my_sprite.Ladder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">my_sprite.</span></span><span class="sig-name descname"><span class="pre">Ladder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#Ladder"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.Ladder" title="Link to this definition">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sprite</span></code></p>
+<p>Класс, представляющий лестницу.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>image (pg.Surface): Изображение лестницы (красный прямоугольник).
+rect (pg.Rect): Прямоугольник, определяющий положение и размер лестницы.</p>
+</dd>
+<dt>Методы:</dt><dd><p>__init__(x, y, <a href="#id1"><span class="problematic" id="id2">*</span></a>groups): Инициализирует лестницу, устанавливает положение и добавляет в группы спрайтов.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="my_sprite.MySprite">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">my_sprite.</span></span><span class="sig-name descname"><span class="pre">MySprite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite" title="Link to this definition">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sprite</span></code></p>
+<p>Класс, представляющий игрового персонажа.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>IMG (pg.Surface): Поверхность, используемая для отображения спрайта. Залита лаймовым цветом.
+STEP (int): Количество пикселей, на которое спрайт перемещается за один кадр при движении по горизонтали.
+FALL_SPEED (int): Скорость падения спрайта под действием гравитации.
+JUMP_SPEED (int): Начальная скорость прыжка спрайта.</p>
+</dd>
+<dt>Методы:</dt><dd><p>__init__(<a href="#id3"><span class="problematic" id="id4">*</span></a>groups): Инициализирует спрайт, устанавливает изображение, прямоугольник и начальные значения.
+update(events, platforms, ladders): Обновляет состояние спрайта в каждом кадре.
+handle_input(ladders): Обрабатывает ввод пользователя для перемещения и прыжков.
+jump(): Заставляет спрайт прыгнуть.
+apply_gravity(platforms): Применяет гравитацию к спрайту.
+move_x(): Перемещает спрайт по горизонтали.
+move_y(platforms, ladders): Перемещает спрайт по вертикали и обрабатывает столкновения с платформами и лестницами.
+check_ladder_collision(ladders): Проверяет, находится ли спрайт на лестнице.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="my_sprite.MySprite.FALL_SPEED">
+<span class="sig-name descname"><span class="pre">FALL_SPEED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1</span></em><a class="headerlink" href="#my_sprite.MySprite.FALL_SPEED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="my_sprite.MySprite.IMG">
+<span class="sig-name descname"><span class="pre">IMG</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;Surface(20x20x32</span> <span class="pre">SW)&gt;</span></em><a class="headerlink" href="#my_sprite.MySprite.IMG" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="my_sprite.MySprite.JUMP_SPEED">
+<span class="sig-name descname"><span class="pre">JUMP_SPEED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-15</span></em><a class="headerlink" href="#my_sprite.MySprite.JUMP_SPEED" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="my_sprite.MySprite.STEP">
+<span class="sig-name descname"><span class="pre">STEP</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">10</span></em><a class="headerlink" href="#my_sprite.MySprite.STEP" title="Link to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.apply_gravity">
+<span class="sig-name descname"><span class="pre">apply_gravity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">platforms</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.apply_gravity"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.apply_gravity" title="Link to this definition">¶</a></dt>
+<dd><p>Применяет гравитацию к спрайту.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>platforms: Группа спрайтов платформ.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.check_ladder_collision">
+<span class="sig-name descname"><span class="pre">check_ladder_collision</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ladders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.check_ladder_collision"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.check_ladder_collision" title="Link to this definition">¶</a></dt>
+<dd><p>Проверяет, находится ли спрайт на лестнице.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>ladders: Группа спрайтов лестниц.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.handle_input">
+<span class="sig-name descname"><span class="pre">handle_input</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">ladders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.handle_input"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.handle_input" title="Link to this definition">¶</a></dt>
+<dd><p>Обрабатывает ввод пользователя для перемещения и прыжков.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>ladders: Группа спрайтов лестниц.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.jump">
+<span class="sig-name descname"><span class="pre">jump</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.jump"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.jump" title="Link to this definition">¶</a></dt>
+<dd><p>Заставляет спрайт прыгнуть.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.move_x">
+<span class="sig-name descname"><span class="pre">move_x</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.move_x"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.move_x" title="Link to this definition">¶</a></dt>
+<dd><p>Перемещает спрайт по горизонтали.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.move_y">
+<span class="sig-name descname"><span class="pre">move_y</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">platforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.move_y"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.move_y" title="Link to this definition">¶</a></dt>
+<dd><p>Перемещает спрайт по вертикали и обрабатывает столкновения с платформами и лестницами.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>platforms: Группа спрайтов платформ.
+ladders: Группа спрайтов лестниц.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="my_sprite.MySprite.update">
+<span class="sig-name descname"><span class="pre">update</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">events</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">platforms</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">ladders</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#MySprite.update"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.MySprite.update" title="Link to this definition">¶</a></dt>
+<dd><p>Обновляет состояние спрайта в каждом кадре.</p>
+<dl class="simple">
+<dt>Аргументы:</dt><dd><p>events: Список событий Pygame.
+platforms: Группа спрайтов платформ.
+ladders: Группа спрайтов лестниц.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="my_sprite.Platform">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">my_sprite.</span></span><span class="sig-name descname"><span class="pre">Platform</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">groups</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/my_sprite.html#Platform"><span class="viewcode-link"><span class="pre">[исходный</span> <span class="pre">код]</span></span></a><a class="headerlink" href="#my_sprite.Platform" title="Link to this definition">¶</a></dt>
+<dd><p>Базовые классы: <code class="xref py py-class docutils literal notranslate"><span class="pre">Sprite</span></code></p>
+<p>Класс, представляющий платформу.</p>
+<dl class="simple">
+<dt>Атрибуты:</dt><dd><p>image (pg.Surface): Изображение платформы (белый прямоугольник).
+rect (pg.Rect): Прямоугольник, определяющий положение и размер платформы.</p>
+</dd>
+<dt>Методы:</dt><dd><p>__init__(x, y, <a href="#id5"><span class="problematic" id="id6">*</span></a>groups): Инициализирует платформу, устанавливает положение и добавляет в группы спрайтов.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Ссылка на этот заголовок">¶</a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Алфавитный указатель</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Состав модуля</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Поиск</span></a></p></li>
+</ul>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="#">Ladder Platformer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Навигация</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="#">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Pavel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+      |
+      <a href="_sources/index.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

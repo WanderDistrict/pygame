@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+
+<html lang="ru" data-content_root="../">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>my_sprite &#8212; документация Ladder Platformer 1.0</title>
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=5ecbeea2" />
+    <link rel="stylesheet" type="text/css" href="../_static/alabaster.css?v=12dfc556" />
+    <script src="../_static/documentation_options.js?v=9ca2116e"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/translations.js?v=9bfe3ffa"></script>
+    <link rel="index" title="Алфавитный указатель" href="../genindex.html" />
+    <link rel="search" title="Поиск" href="../search.html" />
+   
+  <link rel="stylesheet" href="../_static/custom.css" type="text/css" />
+  
+
+  
+  
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <h1>Исходный код my_sprite</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Этот модуль содержит классы для создания спрайтов в Pygame,</span>
+<span class="sd">включая игрового персонажа (MySprite), платформы (Platform) и лестницы (Ladder).</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">pygame</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pg</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_img</span>
+
+
+<div class="viewcode-block" id="MySprite">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MySprite</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Класс, представляющий игрового персонажа.</span>
+
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        IMG (pg.Surface): Поверхность, используемая для отображения спрайта. Залита лаймовым цветом.</span>
+<span class="sd">        STEP (int): Количество пикселей, на которое спрайт перемещается за один кадр при движении по горизонтали.</span>
+<span class="sd">        FALL_SPEED (int): Скорость падения спрайта под действием гравитации.</span>
+<span class="sd">        JUMP_SPEED (int): Начальная скорость прыжка спрайта.</span>
+
+<span class="sd">    Методы:</span>
+<span class="sd">        __init__(*groups): Инициализирует спрайт, устанавливает изображение, прямоугольник и начальные значения.</span>
+<span class="sd">        update(events, platforms, ladders): Обновляет состояние спрайта в каждом кадре.</span>
+<span class="sd">        handle_input(ladders): Обрабатывает ввод пользователя для перемещения и прыжков.</span>
+<span class="sd">        jump(): Заставляет спрайт прыгнуть.</span>
+<span class="sd">        apply_gravity(platforms): Применяет гравитацию к спрайту.</span>
+<span class="sd">        move_x(): Перемещает спрайт по горизонтали.</span>
+<span class="sd">        move_y(platforms, ladders): Перемещает спрайт по вертикали и обрабатывает столкновения с платформами и лестницами.</span>
+<span class="sd">        check_ladder_collision(ladders): Проверяет, находится ли спрайт на лестнице.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">IMG</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">Surface</span><span class="p">([</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">])</span>
+    <span class="n">IMG</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s1">&#39;lime&#39;</span><span class="p">)</span>
+    <span class="n">STEP</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">FALL_SPEED</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">JUMP_SPEED</span> <span class="o">=</span> <span class="o">-</span><span class="mi">15</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">groups</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Инициализирует спрайт игрока.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            *groups: Группы спрайтов, в которые добавляется спрайт игрока.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">IMG</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+<div class="viewcode-block" id="MySprite.update">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.update">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">events</span><span class="p">,</span> <span class="n">platforms</span><span class="p">,</span> <span class="n">ladders</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Обновляет состояние спрайта в каждом кадре.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            events: Список событий Pygame.</span>
+<span class="sd">            platforms: Группа спрайтов платформ.</span>
+<span class="sd">            ladders: Группа спрайтов лестниц.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">handle_input</span><span class="p">(</span><span class="n">ladders</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">apply_gravity</span><span class="p">(</span><span class="n">platforms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_x</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">move_y</span><span class="p">(</span><span class="n">platforms</span><span class="p">,</span> <span class="n">ladders</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MySprite.handle_input">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.handle_input">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">handle_input</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ladders</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Обрабатывает ввод пользователя для перемещения и прыжков.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            ladders: Группа спрайтов лестниц.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">keys</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">key</span><span class="o">.</span><span class="n">get_pressed</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_LEFT</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_a</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_RIGHT</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_d</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_direction</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x_direction</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="p">(</span><span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_SPACE</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_UP</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_w</span><span class="p">])</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">jump</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_UP</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_w</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y_direction</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_DOWN</span><span class="p">]</span> <span class="ow">or</span> <span class="n">keys</span><span class="p">[</span><span class="n">pg</span><span class="o">.</span><span class="n">K_s</span><span class="p">]:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y_direction</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y_direction</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="MySprite.jump">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.jump">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">jump</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Заставляет спрайт прыгнуть.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">JUMP_SPEED</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MySprite.apply_gravity">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.apply_gravity">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">apply_gravity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platforms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Применяет гравитацию к спрайту.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            platforms: Группа спрайтов платформ.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">FALL_SPEED</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">&gt;</span> <span class="mi">15</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="mi">15</span></div>
+
+
+<div class="viewcode-block" id="MySprite.move_x">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.move_x">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_x</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Перемещает спрайт по горизонтали.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">x_direction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span></div>
+
+
+<div class="viewcode-block" id="MySprite.move_y">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.move_y">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">move_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">platforms</span><span class="p">,</span> <span class="n">ladders</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Перемещает спрайт по вертикали и обрабатывает столкновения с платформами и лестницами.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            platforms: Группа спрайтов платформ.</span>
+<span class="sd">            ladders: Группа спрайтов лестниц.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_direction</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">STEP</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">platform</span> <span class="ow">in</span> <span class="n">platforms</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">colliderect</span><span class="p">(</span><span class="n">platform</span><span class="o">.</span><span class="n">rect</span><span class="p">):</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="n">platform</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">top</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">False</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="k">break</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">bottom</span> <span class="o">&gt;=</span> <span class="mi">500</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">bottom</span> <span class="o">=</span> <span class="mi">500</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">y_velocity</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">falling</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">on_ground</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">jump_count</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">check_ladder_collision</span><span class="p">(</span><span class="n">ladders</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MySprite.check_ladder_collision">
+<a class="viewcode-back" href="../index.html#my_sprite.MySprite.check_ladder_collision">[документация]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_ladder_collision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ladders</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Проверяет, находится ли спрайт на лестнице.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            ladders: Группа спрайтов лестниц.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">for</span> <span class="n">ladder</span> <span class="ow">in</span> <span class="n">ladders</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">colliderect</span><span class="p">(</span><span class="n">ladder</span><span class="o">.</span><span class="n">rect</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">on_ladder</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="k">break</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Platform">
+<a class="viewcode-back" href="../index.html#my_sprite.Platform">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Platform</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Класс, представляющий платформу.</span>
+
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        image (pg.Surface): Изображение платформы (белый прямоугольник).</span>
+<span class="sd">        rect (pg.Rect): Прямоугольник, определяющий положение и размер платформы.</span>
+
+<span class="sd">    Методы:</span>
+<span class="sd">        __init__(x, y, *groups): Инициализирует платформу, устанавливает положение и добавляет в группы спрайтов.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">groups</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Инициализирует платформу.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            x (int): X-координата верхнего левого угла платформы.</span>
+<span class="sd">            y (int): Y-координата верхнего левого угла платформы.</span>
+<span class="sd">            *groups: Группы спрайтов, в которые добавляется платформа.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">Surface</span><span class="p">([</span><span class="mi">100</span><span class="p">,</span> <span class="mi">10</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s1">&#39;white&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span></div>
+
+
+
+<div class="viewcode-block" id="Ladder">
+<a class="viewcode-back" href="../index.html#my_sprite.Ladder">[документация]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ladder</span><span class="p">(</span><span class="n">pg</span><span class="o">.</span><span class="n">sprite</span><span class="o">.</span><span class="n">Sprite</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Класс, представляющий лестницу.</span>
+
+<span class="sd">    Атрибуты:</span>
+<span class="sd">        image (pg.Surface): Изображение лестницы (красный прямоугольник).</span>
+<span class="sd">        rect (pg.Rect): Прямоугольник, определяющий положение и размер лестницы.</span>
+
+<span class="sd">    Методы:</span>
+<span class="sd">        __init__(x, y, *groups): Инициализирует лестницу, устанавливает положение и добавляет в группы спрайтов.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">*</span><span class="n">groups</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Инициализирует лестницу.</span>
+
+<span class="sd">        Аргументы:</span>
+<span class="sd">            x (int): X-координата верхнего левого угла лестницы.</span>
+<span class="sd">            y (int): Y-координата верхнего левого угла лестницы.</span>
+<span class="sd">            *groups: Группы спрайтов, в которые добавляется лестница.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">groups</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span> <span class="o">=</span> <span class="n">pg</span><span class="o">.</span><span class="n">Surface</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">image</span><span class="o">.</span><span class="n">get_rect</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span></div>
+
+</pre></div>
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="Main">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="../index.html">Ladder Platformer</a></h1>
+
+
+
+
+
+
+
+
+<h3>Навигация</h3>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="../index.html">Documentation overview</a><ul>
+  <li><a href="index.html">Код модуля</a><ul>
+  </ul></li>
+  </ul></li>
+</ul>
+</div>
+<search id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Быстрый поиск</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Искать" />
+    </form>
+    </div>
+</search>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &#169;2025, Pavel.
+      
+      |
+      Powered by <a href="https://www.sphinx-doc.org/">Sphinx 7.4.7</a>
+      &amp; <a href="https://alabaster.readthedocs.io">Alabaster 0.7.16</a>
+      
+    </div>
+
+    
+
+    
+  </body>
+</html>
