@@ -1,8 +1,10 @@
+import dataclasses
 import os
 import sys
-from PIL import Image
 
 import pygame as pg
+
+from config import Config
 
 
 def load_img(image_path: str, colorkey=None) -> pg.Surface:
@@ -45,4 +47,45 @@ def load_many_imgs(image_path: str, colorkey=None, row_count: int = 1, col_count
             result.append(sub_img)
 
     result.append(og_img)
+    return result
+
+
+def load_map(filename: str) -> list[str]:
+    path = os.path.join('data', 'maps', filename)
+    with open(path, encoding='utf-8') as f:
+        my_map = list(map(str.rstrip, f.readlines()))
+    width = max(len(s) for s in my_map)
+    return [s.ljust(width, '.') for s in my_map]
+
+
+@dataclasses.dataclass
+class TileGroup:
+    all_tile: pg.sprite.Group = pg.sprite.Group()
+    obstacle: pg.sprite.Group = pg.sprite.Group()
+
+
+tile_imgs = {
+    ' ': load_img('wood.png'),
+    '#': load_img('cobblestone.jpg'),
+}
+tile_imgs = {
+    c: pg.transform.scale(img, (Config.TILE, Config.TILE))
+    for c, img in tile_imgs.items()
+}
+
+
+def read_map(my_map: list[str]) -> TileGroup:
+
+    from tile import Tile
+    result = TileGroup()
+    for row, s in enumerate(my_map):
+        for col, cell in enumerate(s):
+            if cell == '.':
+                continue
+            img = tile_imgs[cell]
+            tile = Tile(img, row * Config.TILE, col * Config.TILE)
+            result.all_tile.add(tile)
+            if cell in '#':
+                result.obstacle.add(tile)
+
     return result
