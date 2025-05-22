@@ -67,6 +67,7 @@ class TileGroup:
 tile_imgs = {
     ' ': load_img('wood.png'),
     '#': load_img('cobblestone.jpg'),
+    '%': load_img('dark.jpg')
 }
 tile_imgs = {
     c: pg.transform.scale(img, (Config.TILE, Config.TILE))
@@ -85,7 +86,7 @@ def read_map(my_map: list[str]) -> TileGroup:
             img = tile_imgs[cell]
             tile = Tile(img, row * Config.TILE, col * Config.TILE)
             result.all_tile.add(tile)
-            if cell in '#':
+            if cell in '#' or cell in '%':
                 result.obstacle.add(tile)
 
     return result
